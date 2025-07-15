@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blossom, My Dream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom right, #fce4ec, #e0f2f7, #e8eaf6); /* Soft, ethereal gradient */
+            color: #4a148c; /* Deep purple, elegant */
+            font-family: 'Lora', serif; /* Elegant, readable serif font */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95); /* Semi-transparent white intro */
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            text-align: center;
+            transition: opacity 2s ease-in-out;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #intro-overlay h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8em;
+            color: #d81b60; /* Vibrant pink/red */
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            animation: fadeInScale 2s ease-out forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        #intro-overlay p {
+            font-size: 1.4em;
+            color: #6a1b9a; /* Deeper purple for intro text */
+            margin: 0 40px 40px;
+            line-height: 1.6;
+            max-width: 700px;
+            animation: fadeIn 2s ease-out forwards;
+            animation-delay: 1.5s;
+            opacity: 0;
+        }
+
+        #start-button {
+            background-color: #ff80ab; /* Soft pink */
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.6em;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(255, 128, 171, 0.4);
+            animation: fadeIn 2s ease-out forwards;
+            animation-delay: 2.5s;
+            opacity: 0;
+        }
+
+        #start-button:hover {
+            background-color: #e0609b; /* Darker pink on hover */
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(255, 128, 171, 0.6);
+        }
+
+        #petal-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Below messages */
+        }
+
+        #message-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.3); /* Very subtle translucent box */
+            backdrop-filter: blur(10px); /* More blurred frosted glass */
+            border-radius: 20px;
+            padding: 25px 45px;
+            font-size: 1.8em;
+            color: #d81b60; /* Vibrant pink for core messages */
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+            max-width: 70%;
+            line-height: 1.5;
+            box-shadow: 0 0 30px rgba(216, 27, 96, 0.3);
+            z-index: 50; /* Above petals */
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        #final-reveal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, #fce4ec 0%, #e0f2f7 50%, #e8eaf6 100%); /* Same soft gradient */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 3s ease-in-out;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #final-reveal-overlay h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5em;
+            color: #d81b60; /* Vibrant pink */
+            text-shadow: 0 0 20px rgba(216, 27, 96, 0.4), 0 0 40px rgba(216, 27, 96, 0.2);
+            margin-bottom: 30px;
+            animation: fadeInScale 3s ease-out forwards;
+        }
+
+        #final-reveal-overlay p {
+            font-family: 'Lora', serif;
+            font-size: 1.8em;
+            color: #6a1b9a; /* Deeper purple */
+            line-height: 1.8;
+            max-width: 800px;
+            animation: fadeIn 3s ease-out forwards;
+            animation-delay: 1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Particles - the new "confetti" */
+        .sparkle-particle {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkle-float 4s ease-out forwards;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes sparkle-float {
+            0% { transform: scale(0) translateY(0); opacity: 0; }
+            20% { transform: scale(1) translateY(-20px); opacity: 0.8; }
+            100% { transform: scale(0.2) translateY(-100px); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay">
+        <h1>Awaiting Our Unfolding Story...</h1>
+        <p>My dearest, just as a beautiful blossom gently unfurls to reveal its inner grace, so too does our connection grow, revealing new layers of beauty and understanding with each moment. Click anywhere to watch our story unfold...</p>
+        <button id="start-button">Begin Our Unfolding</button>
+    </div>
+
+    <canvas id="petal-canvas"></canvas>
+
+    <div id="message-display"></div>
+
+    <div id="final-reveal-overlay">
+        <h2>My Beautiful Blossom of Love</h2>
+        <p>Every petal you've unveiled is a testament to the profound and unique connection we share, a bond that grows more radiant with each passing day. Your essence enchants me, and I dream of every beautiful moment yet to unfold.</p>
+        <p style="font-size:1.6em; margin-top: 40px; color: #ff80ab;">You are the most cherished dream of my heart.</p>
+    </div>
+
+    <audio id="bg-music" loop>
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const canvas = document.getElementById('petal-canvas');
+        const ctx = canvas.getContext('2d');
+        const messageDisplay = document.getElementById('message-display');
+        const introOverlay = document.getElementById('intro-overlay');
+        const startButton = document.getElementById('start-button');
+        const finalRevealOverlay = document.getElementById('final-reveal-overlay');
+        const bgMusic = document.getElementById('bg-music');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let petalsData = []; // Stores the positions and angles for drawing petals
+        let revealedPetalsCount = 0;
+        let bloomCenterX, bloomCenterY;
+
+        // --- CUSTOMIZE THESE MESSAGES ---
+        // Focus on her qualities, your connection, shared dreams, feelings.
+        const unfoldingMessages = [
+            { text: "The way you always make me smile so effortlessly." },
+            { text: "Your way of loving is the most beautiful thing I've ever felt." },
+            { text: "The way you always try your best to cheer me up when I'm down." },
+            { text: "Your smile is most the most contagious." },
+            { text: "I'm proud of you my love for being the strong woman that you are." },
+            { text: "Your quiet strength and resilience, inspires me." },
+            { text: "Your beauty is more than that of the moon in its fullest phase." },
+            { text: "The way you talk about me and compliment me, always has me over the moon." },
+            { text: "The comfort of knowing you're always there." },
+            { text: "I love your beautiful brown eyes." },
+            { text: "I love how i can always be there for you whenever you need me." },
+            { text: "Your genuine kindness, a truly rare gem." },
+            { text: "I absolutely LOVE your hands." },
+            { text: "You are my world, you are everything to me and you always will be my love." },
+            { text: "I admire your art skills." },
+            { text: "I fucking LOVE your features you beautiful woman." },
+            { text: "I love your taste in everything." },
+            { text: "I love your charisma and how interested you have me when you're the topic of discussion ." },
+            { text: "I know that you love hibiscus, and ever since it's been my fav too." },
+            { text: "I LOVE YOU MY PRINCESS, MI AMOR, MY WIFE, THE loml, THE MOST GORGEOUS WOMAN TO EVER STEP FOOT ON EARTH, I LOVE YOU BAE." },
+
+
+
+
+
+
+            // Add many more! Aim for 15-25 for a good unfolding journey.
+        ];
+
+        // --- Particle System (for "confetti") ---
+        class SparkleParticle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 2 + 0.5; // Smaller, delicate sparkles
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 3,
+                    y: (Math.random() - 0.5) * 3 - 1 // Slight upward tendency
+                };
+                this.alpha = 1;
+                this.gravity = 0.02; // Very gentle float down
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.015; // Fade out slowly
+            }
+        }
+
+        let sparkleParticles = [];
+
+        function createSparkles(x, y, count = 15) {
+            const colors = ['#FFC0CB', '#FFDAB9', '#E0BBE4', '#957DAD', '#D8BFD8']; // Soft pinks, purples
+            for (let i = 0; i < count; i++) {
+                sparkleParticles.push(new SparkleParticle(
+                    x, y, colors[Math.floor(Math.random() * colors.length)]
+                ));
+            }
+        }
+
+        // --- Canvas Drawing & Animation ---
+        function drawPetal(x, y, radius, angle, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            // Draw a basic "petal" shape using bezier curves
+            ctx.ellipse(0, 0, radius * 0.5, radius * 1.2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function animateCanvas() {
+            requestAnimationFrame(animateCanvas);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw current petals
+            petalsData.forEach(petal => {
+                petal.currentRadius = Math.min(petal.targetRadius, petal.currentRadius + (petal.targetRadius - petal.currentRadius) * 0.05); // Smooth growth
+                drawPetal(petal.x, petal.y, petal.currentRadius, petal.angle, petal.color);
+            });
+
+            // Update and draw sparkles
+            sparkleParticles.forEach((particle, index) => {
+                particle.update();
+                particle.draw();
+                if (particle.alpha <= 0.05) {
+                    sparkleParticles.splice(index, 1);
+                }
+            });
+        }
+
+        // --- Interaction Logic ---
+        function showMessage(text) {
+            messageDisplay.textContent = text;
+            messageDisplay.style.visibility = 'visible';
+            messageDisplay.style.opacity = '1';
+            messageDisplay.style.transform = 'translate(-50%, -50%) scale(1)';
+        }
+
+        function hideMessage() {
+            messageDisplay.style.opacity = '0';
+            messageDisplay.style.transform = 'translate(-50%, -50%) scale(0.9)'; // Shrink slightly
+            messageDisplay.addEventListener('transitionend', () => {
+                if (messageDisplay.style.opacity === '0') {
+                    messageDisplay.style.visibility = 'hidden';
+                }
+            }, { once: true });
+        }
+
+        function revealNextPetal() {
+            if (revealedPetalsCount < unfoldingMessages.length) {
+                const message = unfoldingMessages[revealedPetalsCount].text;
+                showMessage(message);
+
+                // Calculate petal position and properties
+                const angle = (revealedPetalsCount / unfoldingMessages.length) * Math.PI * 2; // Distribute petals around a circle
+                const radiusOffset = 80 + revealedPetalsCount * 5; // Bloom outwards
+                const petalX = bloomCenterX + Math.cos(angle) * radiusOffset;
+                const petalY = bloomCenterY + Math.sin(angle) * radiusOffset;
+                const petalColor = `hsl(${Math.random() * 30 + 330}, 80%, 85%)`; // Pink/purple hues
+
+                petalsData.push({
+                    x: petalX,
+                    y: petalY,
+                    angle: angle + Math.PI / 2, // Orient petal upwards initially
+                    targetRadius: 30, // Max size of petal
+                    currentRadius: 0, // Starts small, grows
+                    color: petalColor
+                });
+
+                createSparkles(petalX, petalY); // Emit sparkles from new petal
+                revealedPetalsCount++;
+
+                if (revealedPetalsCount === unfoldingMessages.length) {
+                    // All petals revealed, show final message after a delay
+                    setTimeout(() => {
+                        hideMessage();
+                        setTimeout(showFinalOverlay, 2000); // Wait for the last message to fade
+                    }, 4000); // Give her time to read the last message
+                }
+            }
+        }
+
+        // --- Final Overlay Logic ---
+        function showFinalOverlay() {
+            finalRevealOverlay.style.visibility = 'visible';
+            finalRevealOverlay.style.opacity = '1';
+            // Stop background music or fade it out
+            if (!bgMusic.paused) {
+                const fadeAudio = setInterval(() => {
+                    if (bgMusic.volume > 0.05) {
+                        bgMusic.volume -= 0.05;
+                    } else {
+                        bgMusic.pause();
+                        bgMusic.volume = 1;
+                        clearInterval(fadeAudio);
+                    }
+                }, 200);
+            }
+        }
+
+        // --- Initial Setup and Start ---
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Recalculate center for dynamic resizing
+            bloomCenterX = canvas.width / 2;
+            bloomCenterY = canvas.height / 2;
+            // Optionally clear petalsData and restart for perfect re-centering
+            // For this design, it's ok if petals are slightly off-center on resize after starting.
+        });
+
+        startButton.addEventListener('click', () => {
+            introOverlay.style.opacity = '0';
+            bgMusic.play().catch(e => console.log("Autoplay prevented:", e));
+            setTimeout(() => {
+                introOverlay.style.display = 'none';
+                // Set initial bloom center
+                bloomCenterX = canvas.width / 2;
+                bloomCenterY = canvas.height / 2;
+            }, 2000);
+        });
+
+        // Click anywhere on the body after intro to reveal petals
+        document.body.addEventListener('click', (event) => {
+            if (introOverlay.style.display === 'none' && finalRevealOverlay.style.visibility !== 'visible') {
+                // Ignore clicks on message display itself
+                if (!messageDisplay.contains(event.target) && event.target !== messageDisplay) {
+                    revealNextPetal();
+                }
+            }
+        });
+
+        // Initialize animation
+        animateCanvas();
+        // bgMusic.load(); // Uncomment if providing a source in HTML and want to preload
+    </script>
+</body>
+</html>
